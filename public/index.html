@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+    <title>Document</title>
+    <script>
+        // Example POST method implementation:
+        async function postData(url = '', data = {}) {
+            // Default options are marked with *
+            const response = await fetch(url, {
+                method: 'POST', // *GET, POST, PUT, DELETE, etc.
+                mode: 'cors', // no-cors, *cors, same-origin
+                cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+                //   credentials: 'same-origin', // include, *same-origin, omit
+                headers: {
+                    'Content-Type': 'application/json',
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: 'follow', // manual, *follow, error
+                referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify(data) // body data type must match "Content-Type" header
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+        }
+
+        function getText(e) {
+            e.preventDefault();
+            postData('/to/', { "data": document.getElementById("myInput").value })
+                .then(data => {
+                    console.log(data); // JSON data parsed by `data.json()` call
+                    document.getElementById("answer").innerHTML = data.data
+                });
+        } 
+    </script>
+
+    <style>
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .textWork {
+            padding: 10px;
+            background-color: antiquewhite;
+            border: 1px solid #555;
+        }
+
+        .outer {
+            border: 1px solid greenyellow;
+
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 140px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 150%;
+            left: 50%;
+            margin-left: -75px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        #board1 {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto auto;
+            font-size: 2em;
+        }
+
+        .item1 {
+            grid-column: 1;
+        }
+
+        .item2 {
+            grid-column: 1 / 2;
+        }
+
+        #myInput {
+            font-size: 2em;
+            position: fixed;
+            left: 25%;
+            bottom: 25%;
+            width: 500px;
+            border: 3px solid #fa0808;
+            margin: 20px;
+        }
+
+        .vowelfixed {
+            font-size: 2em;
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+
+        .consofixed {
+            font-size: 2em;
+            position: fixed;
+            left: 0;
+            top: 50px;
+        }
+
+        .consoexpandfixed {
+            font-size: 2em;
+            position: relative;
+            left: 400px;
+            top: 50px;
+        }
+
+        #answer {
+            font-size: 2em;
+            position: fixed;
+            left: 25%;
+            bottom: 55%;
+            width: 500px;
+            border: 3px solid #73AD21;
+            margin: 20px;
+            overflow: scroll;
+            height: 200px;
+        }
+
+        #translateto {
+            font-size: 2em;
+            position: fixed;
+            left: 38%;
+            bottom: 15%;
+            border: 3px solid #73AD21;
+            border-radius: 10%;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <textarea value="" id="myInput"" rows="5" cols="15"></textarea>
+
+    <div id="board" class="w3-cell-row">
+
+
+
+    </div>
+
+    <div id="answer" >&nbsp;</div>
+
+    <button id="translateto" onclick="getText(event)">FIND</button>
+
+    <script>
+
+        function addSpace() {
+            console.log(event)
+            var copyText = document.getElementById("myInput");
+
+            if (copyText.value.length == 0)
+                return;
+
+            switch (event.keyCode) {
+                case 32: {
+                    copyText.value = copyText.value + " "
+                    break;
+                }
+
+                case 8:
+                    {
+                        copyText.value = copyText.value.substring(0, copyText.value.length - 1)
+                        break
+                    }
+
+                case 13: 
+                getText(event);
+                break;
+            }
+
+        }
+
+        document.addEventListener("keydown", addSpace)
+        function myFunction(event) {
+            console.log(event)
+            if (event.shiftKey || event.cntlKey || event.altKey || event.detail == 2) {
+                var x = document.getElementsByClassName(event.target.innerHTML);
+                var y = document.getElementsByClassName("CurrentSelectionAction");
+                for (const iterator of y) {
+
+                    if (iterator) {
+                        iterator.classList.remove("w3-orange")
+                        iterator.classList.remove("CurrentSelectionAction")
+
+                    }
+                }
+
+                for (const iterator of x) {
+
+                    // iterator.classList.remove("w3-hide")
+                    //  iterator.classList.add("w3-show")
+                    const y = iterator.getBoundingClientRect().top + window.scrollY;
+                    window.scroll({
+                        top: y,
+                        behavior: 'smooth'
+                    });
+                    iterator.classList.add("w3-orange")
+                    iterator.classList.add("CurrentSelectionAction")
+
+                    break;
+                }
+                var copyText = document.getElementById("myInput");
+
+                if (event.srcElement.nodeName == "SPAN")
+                    copyText.value = copyText.value.substring(0, copyText.value.length - 1)
+
+                copyText.select();
+                copyText.setSelectionRange(0, 99999);
+                navigator.clipboard.writeText(copyText.value);
+                return null;
+            } else {
+                console.log("else part")
+                var copyText = document.getElementById("myInput");
+
+                if (event.srcElement.nodeName == "SPAN")
+                    copyText.value = copyText.value + "" + event.target.innerHTML
+
+
+                copyText.select();
+                copyText.setSelectionRange(0, 99999);
+                navigator.clipboard.writeText(copyText.value);
+            }
+            //var tooltip = document.getElementById("myTooltip");
+            // tooltip.innerHTML = "Copied: " + copyText.value;
+        }
+
+        function outFunc() {
+            var tooltip = document.getElementById("myTooltip");
+            tooltip.innerHTML = "Copy to clipboard";
+        }
+
+        var boardScreen = document.getElementById("board")
+        var element;
+        var boardScreenLine1 = document.createElement("div")
+        // Vowel work
+        var initialValue = 2309
+        var accent = 2381;
+        for (let index = 0; index < 16; index++) {
+            if (index >= 7 && index <= 9 || index == 12 || index == 13)
+                continue
+            newIndex = initialValue + index
+            element = document.createElement("span")
+            element.classList.add("textWork")
+            element.addEventListener("click", function (event) {
+                myFunction(event)
+            })
+            element.addEventListener("dblclick", function (event) {
+                dobwork(event)
+            })
+            element.innerHTML = "&#" + newIndex
+            boardScreenLine1.append(element)
+        }
+
+        element = document.createElement("span")
+        element.classList.add("textWork")
+        element.addEventListener("click", function (event) {
+            myFunction(event)
+        })
+        element.innerHTML = "&#" + accent
+        boardScreenLine1.append(element)
+
+
+        element = document.createElement("span")
+        element.classList.add("textWork")
+        element.addEventListener("click", function (event) {
+            myFunction(event)
+        })
+        element.innerHTML = "&#2305"
+        boardScreenLine1.append(element)
+
+
+        element = document.createElement("span")
+        element.classList.add("textWork")
+        element.addEventListener("click", function (event) {
+            myFunction(event)
+        })
+        element.innerHTML = "&#2306"
+        boardScreenLine1.append(element)
+
+        element = document.createElement("span")
+        element.classList.add("textWork")
+        element.addEventListener("click", function (event) {
+            myFunction(event)
+        })
+        element.innerHTML = "&#2307"
+        boardScreenLine1.append(element)
+
+        boardScreenLine1.style = "width: 600px;padding: 10px;border: 1px solid green"
+        boardScreenLine1.classList.add("w3-container")
+        boardScreenLine1.classList.add("w3-cell")
+        boardScreenLine1.classList.add("vowelfixed")
+
+
+
+        boardScreen.append(boardScreenLine1)
+
+        // Consonant Work
+
+        var boardScreenLine2 = document.createElement("div")
+
+        initialValue = 2325;
+
+        for (let index = 0; index < 37; index++) {
+
+            newIndex = initialValue + index
+
+            if (index % 5 == 0) {
+                element = document.createElement("div")
+                element.style = "padding: 10px"
+                boardScreenLine2.append(element)
+
+            }
+
+            element = document.createElement("span")
+
+            element.classList.add("textWork")
+            element.addEventListener("click", function (event) {
+                myFunction(event)
+            })
+
+            element.innerHTML = "&#" + newIndex
+            boardScreenLine2.append(element)
+        }
+        boardScreenLine2.style = "width: 200px;padding: 10px;border: 1px solid green"
+
+        boardScreen.append(boardScreenLine2)
+        var extraConsonant = [
+            { x: 2325, y: 2381, z: 2359 },
+            { x: 2358, y: 2381, z: 2352 },
+            { x: 2332, y: 2381, z: 2334 },
+            { x: 2340, y: 2381, z: 2352 },
+
+        ];
+
+
+
+        // additional letters
+
+        for (let index = 0; index < extraConsonant.length; index++) {
+
+
+
+            element = document.createElement("span")
+
+            element.classList.add("textWork")
+            element.addEventListener("click", function (event) {
+                myFunction(event)
+            })
+
+            element.innerHTML = "&#" + extraConsonant[index].x + "&#" + extraConsonant[index].y + "&#" + extraConsonant[index].z
+            boardScreenLine2.append(element)
+        }
+        boardScreenLine2.classList.add("item2")
+
+        boardScreenLine2.classList.add("w3-container")
+        boardScreenLine2.classList.add("w3-cell")
+        boardScreenLine2.classList.add("consofixed")
+
+
+
+        var brElement;
+        //combination letters
+        supportLetter = [0, 2366, 2367, 2368, 2369, 2370, 2371, 2375, 2376, 2379, 2380]
+        var boardScreenLine3 = document.createElement("div")
+        //  boardScreenLine3.classList.add("w3-display-container")
+
+        var firstLetter = 2325;
+
+        for (let l = 0; l < 37; l++) {
+            if (l > 0)
+                firstLetter = firstLetter + 1
+            var boardScreenLine3Holder = document.createElement("div")
+
+            for (let index = 0; index < supportLetter.length; index++) {
+
+                element = document.createElement("span")
+
+                element.classList.add("textWork")
+                element.addEventListener("click", function (event) {
+                    myFunction(event)
+                })
+                boardScreenLine3Holder.classList.add(String.fromCodePoint(firstLetter))
+                element.style = "position: absolute: left: 0px; top: 0px"
+                if (supportLetter[index] > 0)
+                    element.innerHTML = "&#" + firstLetter + "&#" + supportLetter[index]
+                else
+                    element.innerHTML = "&#" + firstLetter
+
+
+                boardScreenLine3Holder.append(element)
+                //boardScreenLine3Holder.classList.add("w3-display-topleft")
+                boardScreenLine3Holder.classList.add("w3-padding-16")
+                //boardScreenLine3Holder.classList.add("w3-hide")
+
+
+                boardScreenLine3.append(boardScreenLine3Holder)
+
+
+            }
+
+            brElement = document.createElement("div")
+            brElement.style = "padding: 10px;"
+
+            boardScreenLine3.append(brElement)
+            boardScreen.append(boardScreenLine3)
+
+        }
+
+
+        // extra consonants
+
+        for (let l = 0; l < extraConsonant.length; l++) {
+            var boardScreenLine3Holder = document.createElement("div")
+
+            var firstElement = undefined;
+            for (let index = 0; index < supportLetter.length; index++) {
+
+                element = document.createElement("span")
+
+                element.classList.add("textWork")
+                element.addEventListener("click", function (event) {
+                    myFunction(event)
+                })
+
+
+                if (supportLetter[index] > 0)
+                    element.innerHTML = "&#" + extraConsonant[l].x + "&#" + extraConsonant[l].y + "&#" + extraConsonant[l].z
+                        + "&#" + supportLetter[index]
+                else
+                    element.innerHTML = "&#" + extraConsonant[l].x + "&#" + extraConsonant[l].y + "&#" + extraConsonant[l].z
+                boardScreenLine3Holder.append(element)
+
+                if (firstElement == undefined) {
+                    firstElement = element.innerHTML
+                }
+
+            }
+            //  boardScreenLine3Holder.classList.add("w3-display-topright")
+            boardScreenLine3Holder.classList.add("w3-padding-16")
+            // boardScreenLine3Holder.classList.add("w3-hide")
+            boardScreenLine3Holder.classList.add(firstElement)
+            console.log("firstElemtn" + firstElement)
+            firstElement = undefined
+
+            boardScreenLine3.append(boardScreenLine3Holder)
+
+            brElement = document.createElement("div")
+            brElement.style = "padding: 10px"
+            boardScreenLine3.append(brElement)
+
+        }
+
+        boardScreenLine3.classList.add("w3-display-container")
+        boardScreenLine3.classList.add("w3-cell")
+        boardScreenLine3.classList.add("w3-right")
+        boardScreenLine3.style = "font-size: 2em"
+
+
+    </script>
+</body>
+
+</html>
